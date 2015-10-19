@@ -85,7 +85,9 @@ public class Agent {
 						havedist = false;
 					}
 					this.vx = vr * Math.cos(this.THETA);	//移動
-					this.vy = vr * Math.sin(this.THETA);	
+					this.vy = vr * Math.sin(this.THETA);
+					this.x += vx;
+					this.y += vy;
 					movedis += vr;	//移動距離保存
 				}
 				else {
@@ -93,6 +95,8 @@ public class Agent {
 					havedist = false;
 					this.vx = Math.cos(this.THETA);	//移動
 					this.vy = Math.sin(this.THETA);	
+					this.x += vx;
+					this.y += vy;
 					movedis += vr;
 				}
 				break;

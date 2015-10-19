@@ -3,14 +3,14 @@ public class P_ID_RandomWaypoint {
 		FIELD_SIZE = 100,				//フィールドサイズ
 		REMOVE_LINK_PROBABILITY = 50,
 		DISTANCE_FOR_INTERACTION = 1, 	//交流するための距離
-		DISTANCE_PER_ROUND = 1,
+		DISTANCE_PER_ROUND = 5,
 		
 		N = 1000,						//個体数の上限値
 		Delta = 30,						//最大次数の上限値 
 		
-		n = 50,						//個体数
+		n = 9,						//個体数
 		delta = 4,						//グラフの最大次数
-		s = 60,							//タイマの上限値
+		s = 10,							//タイマの上限値
 	
 		LID_MAX = 2*n;					//最大のID(初期状況のlidに用いる)
 	
@@ -18,7 +18,7 @@ public class P_ID_RandomWaypoint {
 	
 	public static void main (String args[]) {
 		//初期化
-		Graph graph = new Graph(n, Graph.TORUS);
+		Graph graph = new Graph(n, Graph.RANDOM);
 		Agent[] agent = new Agent[n];
 		for (int i = 0; i < LID_MAX; i++) idlist[i] = false;
 		for (int i = 0; i < n; i++) agent[i] = new Agent();
@@ -30,11 +30,6 @@ public class P_ID_RandomWaypoint {
 		boolean CT_count_flag = true, HT_count_flag = false;
 		
 		while (true) {
-			if (IsSafeConfiguration(agent)) { 
-				if (CT_count_flag) System.out.println("CT = " + CT);
-				CT_count_flag = false; 
-				HT_count_flag = true; 
-			}
 			
 			//維持時間終了
 			if (!CT_count_flag && !IsSafeConfiguration(agent)) { 
@@ -43,11 +38,17 @@ public class P_ID_RandomWaypoint {
 			
 			//initiatorとresponderを決める
 			for (int initiator = 0; initiator < n; initiator++)
-				for (int responder = 0; responder < n; responder++)
+				for (int responder = initiator; responder < n; responder++)
 					//交流できるなら交流
 					if (graph.List[initiator][responder] &&
 						distance(agent[initiator], agent[responder]) <= DISTANCE_FOR_INTERACTION &&
 						initiator != responder) {
+						if (IsSafeConfiguration(agent)) { 
+							if (CT_count_flag) System.out.println("CT = " + CT);
+							CT_count_flag = false; 
+							HT_count_flag = true; 
+						}
+						
 						Interaction.interaction(agent[initiator], agent[responder]);
 						if (CT_count_flag) CT++;		//交流ごとにカウント
 						if (HT_count_flag) HT++;
@@ -76,8 +77,8 @@ public class P_ID_RandomWaypoint {
 		//v.lid = id(v_min)かどうか
 		for(int i=0; i < n; i++) 
 			if (agent[i].lid != v_min.var) {
-//				for( int j = 0; j < n; j++) System.out.print(agent[j].lid + "\t");
-//				System.out.println("\n");
+				for( int j = 0; j < n; j++) System.out.print(agent[j].lid + "\t");
+				System.out.println("\n");
 				return false; 
 			}
 		
