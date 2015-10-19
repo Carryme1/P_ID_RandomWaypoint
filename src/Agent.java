@@ -1,0 +1,100 @@
+import java.util.Random;
+
+import javax.tools.Diagnostic;
+
+public class Agent {
+	public int
+		var,		//id
+		lid,		//既知のid最小値
+		timer;		//タイマ
+	
+	public double 
+		x,		//位置
+		y,
+		vx,		//速度
+		vy;
+	
+	//ランダムウェイポイントのための作業用変数
+	private boolean havedist;	//目的地があるかどうか
+	private double				//目的地 
+		R,
+		THETA;
+	private double movedis;		//目的地までどこまで進んだか
+	
+	public static final int 
+		RandomWalk = 0,
+		RandomWaypoint = 1;
+	
+	//コンストラクタ	
+	public Agent () {
+		Random R = new Random();
+		//idの設定
+		while (true) {
+			this.var = R.nextInt(P_ID_RandomWaypoint.LID_MAX);
+			if (!P_ID_RandomWaypoint.idlist[this.var]) { P_ID_RandomWaypoint.idlist[this.var] = true; break; }
+		}
+		
+		//false idもひくように
+		this.lid = R.nextInt(P_ID_RandomWaypoint.LID_MAX);
+		
+		this.timer = R.nextInt(P_ID_RandomWaypoint.s)+1;
+		
+		//場所初期化
+		this.x = R.nextInt(P_ID_RandomWaypoint.FIELD_SIZE) + R.nextDouble();
+		this.y = R.nextInt(P_ID_RandomWaypoint.FIELD_SIZE) + R.nextDouble();
+		
+		havedist = false;
+	}
+
+	//メソッド
+	public boolean IsLeader () {
+		return var==lid ? true : false;
+	}
+	
+	//モデルごとの移動
+	public void MoveAction (int Model) {
+		Random random = null;
+		switch (Model) {
+			case RandomWalk:
+				random = new Random();
+				double r = P_ID_RandomWaypoint.DISTANCE_PER_ROUND;
+				double theta = random.nextInt(360) + random.nextDouble();
+				this.vx = r*Math.cos(theta);
+				this.vy = r*Math.sin(theta);
+				this.x += this.vx;
+				this.y += this.vy;
+				break;
+			case RandomWaypoint:
+				random = new Random();
+				if (!havedist) {
+					this.R = random.nextInt(P_ID_RandomWaypoint.FIELD_SIZE)+random.nextDouble();
+					this.THETA = random.nextInt(360)+random.nextDouble();
+					movedis = 0;
+					while ( 0>this.x+this.R*Math.cos(this.THETA)||this.x+this.R*Math.cos(this.THETA)>P_ID_RandomWaypoint.FIELD_SIZE||
+							0>this.y+this.R*Math.sin(this.THETA)||this.y+this.R*Math.sin(this.THETA)>P_ID_RandomWaypoint.FIELD_SIZE) {
+						this.R = random.nextInt(P_ID_RandomWaypoint.FIELD_SIZE)+random.nextDouble();
+						this.THETA = random.nextInt(360)+random.nextDouble();
+					}
+					havedist = true;
+				}
+				if(P_ID_RandomWaypoint.DISTANCE_PER_ROUND+movedis < R){
+					double vr = P_ID_RandomWaypoint.DISTANCE_PER_ROUND;	//ランダムに次のラウンドで動く距離を決める
+					this.vx = vr * Math.cos(this.THETA);	//移動
+					this.vy = vr * Math.sin(this.THETA);	
+					this.x += vx;
+					this.y += vy;
+					movedis += vr;	//移動距離保存
+				}
+				else {	//Rを超えちゃうとき
+					double vr = R-movedis;
+					havedist = false;
+					this.vx = vr * Math.cos(this.THETA);	//移動
+					this.vy = vr * Math.sin(this.THETA);
+					this.x += vx;
+					this.y += vy;
+					movedis += vr;
+				}
+				break;
+		}
+	}
+}
