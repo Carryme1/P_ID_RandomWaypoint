@@ -1,16 +1,16 @@
 public class P_ID_RandomWaypoint {
 	public static final int 
-		FIELD_SIZE = 100,				//フィールドサイズ
+		FIELD_SIZE = 10,				//フィールドサイズ
 		REMOVE_LINK_PROBABILITY = 50,
 		DISTANCE_FOR_INTERACTION = 1, 	//交流するための距離
-		DISTANCE_PER_ROUND = 5,
+		DISTANCE_PER_ROUND = 1,
 		
 		N = 1000,						//個体数の上限値
 		Delta = 30,						//最大次数の上限値 
 		
-		n = 9,						//個体数
+		n = 30,							//個体数
 		delta = 4,						//グラフの最大次数
-		s = 10,							//タイマの上限値
+		s = 25,						//タイマの上限値
 	
 		LID_MAX = 2*n;					//最大のID(初期状況のlidに用いる)
 	
@@ -77,8 +77,8 @@ public class P_ID_RandomWaypoint {
 		//v.lid = id(v_min)かどうか
 		for(int i=0; i < n; i++) 
 			if (agent[i].lid != v_min.var) {
-				for( int j = 0; j < n; j++) System.out.print(agent[j].lid + "\t");
-				System.out.println("\n");
+//				for( int j = 0; j < n; j++) System.out.print(agent[j].lid + "\t");	//各lidを表示
+//				System.out.println("\n");
 				return false; 
 			}
 		

@@ -61,8 +61,8 @@ public class Agent {
 				double theta = random.nextInt(360) + random.nextDouble();
 				this.vx = r*Math.cos(theta);
 				this.vy = r*Math.sin(theta);
-				this.x += this.vx;
-				this.y += this.vy;
+				this.x += this.vx; this.y += this.vy;
+				this.x %= P_ID_RandomWaypoint.FIELD_SIZE; this.y %= P_ID_RandomWaypoint.FIELD_SIZE;
 				break;
 			case RandomWaypoint:
 				random = new Random();
